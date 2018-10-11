@@ -1,0 +1,29 @@
+package cn.kiway.mp.utils;
+
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
+import android.view.View;
+import android.view.ViewGroup;
+
+
+public class UIUtils {
+
+    public static void animateViewHeight(final View view, int start, int end) {
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(start, end);
+        valueAnimator.start();
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int animatedValue = (int) animation.getAnimatedValue();
+                ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+                layoutParams.height = animatedValue;
+                view.setLayoutParams(layoutParams);
+            }
+        });
+    }
+
+    public static void rotateView(View view, int startAngle, int endAngle) {
+        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(view, "rotation", startAngle, endAngle);
+        objectAnimator.start();
+    }
+}

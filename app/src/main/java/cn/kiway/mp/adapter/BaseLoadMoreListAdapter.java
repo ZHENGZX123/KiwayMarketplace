@@ -1,0 +1,82 @@
+package cn.kiway.mp.adapter;
+
+import android.content.Context;
+
+import java.util.List;
+
+import cn.kiway.mp.widget.LoadingMoreProgressView;
+
+
+public abstract class BaseLoadMoreListAdapter<T> extends BaseListAdapter<T> {
+
+    private static final int ITEM_TYPE_NORMAL = 0;
+    private static final int ITEM_TYPE_LOAD_MORE = 1;
+
+    public BaseLoadMoreListAdapter(Context context, List<T> dataList) {
+        super(context, dataList);
+    }
+
+    /**
+     * 返回条目个数，由于多了一个进度条的条目，所以多加一个1。
+     */
+    @Override
+    public int getCount() {
+        if (getDataList() == null) {
+            return 0;
+        } else {
+            if (getDataList().size() > 5)
+                return getDataList().size() + 1;
+            else
+                return getDataList().size();
+        }
+    }
+
+    /**
+     * 返回条目的类型个数，这里有两种类型的条目，一种是正常的item, 一种是进度条条目
+     */
+    @Override
+    public int getViewTypeCount() {
+        return 2;
+    }
+
+    /**
+     * 返回对应position位置的item的类型，最后一个位置为进度条类型，其他为正常item类型
+     */
+    @Override
+    public int getItemViewType(int position) {
+        if (getDataList().size() <= 5)
+            return ITEM_TYPE_NORMAL;
+        if (position == getCount() - 1) {
+            return ITEM_TYPE_LOAD_MORE;
+        } else {
+            return ITEM_TYPE_NORMAL;
+        }
+    }
+
+    @Override
+    protected ViewHolder onCreateViewHolder(int position) {
+        if (getItemViewType(position) == ITEM_TYPE_LOAD_MORE) {
+            return new ViewHolder(new LoadingMoreProgressView(getContext()));
+        } else {
+            return onCreateNormalViewHolder();
+        }
+    }
+
+    @Override
+    protected void onBindViewHolder(ViewHolder viewHolder, int position) {
+        if (ITEM_TYPE_NORMAL == getItemViewType(position)) {
+            onBindNormalViewHolder(viewHolder, position);
+        }
+    }
+
+    /**
+     * 创建普通的item的ViewHolder
+     */
+    protected abstract ViewHolder onCreateNormalViewHolder();
+
+    /**
+     * 绑定普通的ViewHolder
+     */
+    protected abstract void onBindNormalViewHolder(ViewHolder viewHolder, int position);
+
+}
